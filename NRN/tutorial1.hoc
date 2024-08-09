@@ -1,0 +1,54 @@
+
+//
+//  UCL, Department of Physiology, C123 Tutorial
+//
+//  Action potential generation and Hodgkin-Huxley theory
+//
+//  Padraig Gleeson, Volker Steuber, 2005-2007
+//
+
+
+
+load_file("nrngui.hoc")     // Loads a standard Neuron file which creates the main menu, etc.
+
+// --------------------------------------------------------------
+// set up the squid axon
+// --------------------------------------------------------------
+
+
+dt = 0.025                  // Numerical integration time step
+temperature = 6.3           
+celsius = temperature
+vinit = -63.77              // An initial voltage of the soma
+v_init = vinit
+tstop = 50                  // How long to run the simulation
+
+gna = 0.120 // S/cm2        // Conductance density of the sodium channel
+gk = 0.036 // S/cm2         // Conductance density of the pottasium channel
+
+
+create soma                 // Creating a single Neuron section called soma
+
+soma {
+	nseg = 1
+	L = 10               
+    diam = 10/PI            // Length & diameter being set so that curved surface area is 100 micron squared
+	ra = 35.4               // specific axial resistance
+	insert hh               // main Hodgkin Huxley mechanism
+	
+	ion_style("na_ion", 1, 2, 1, 0, 0)
+	ion_style("k_ion", 1, 2, 1, 0, 0)
+}
+
+
+access soma
+
+proc update_values() {      // To reset the values to default vals
+	access soma
+	gnabar_hh = gna
+	gkbar_hh = gk
+	celsius = temperature
+}
+
+xopen("tutorial1.ses")  // Opens the session file which contains the main graphical elements
+

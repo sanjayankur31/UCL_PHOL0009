@@ -1,0 +1,173 @@
+
+//
+//  UCL, Department of Physiology, C123 Tutorial
+//
+//  Simulating Synaptic Integration
+//  Based on Zach Mainen's model of a layer 5 pyramidal cell 
+//  (Mainen & Sejnowski 1995)
+//
+//  Padraig Gleeson, Volker Steuber, 2005-2007
+//
+
+
+load_file("nrngui.hoc")
+
+// --------------------------------------------------------------
+// redefine some things in stdrun.hoc
+// --------------------------------------------------------------
+
+tstop = 60
+steps_per_ms = 40
+dt = 0.025
+
+
+// --------------------------------------------------------------
+// cell geometry
+// --------------------------------------------------------------
+
+xopen("dks577a.hoc")
+xopen("dks577.append.hoc")
+
+
+// --------------------------------------------------------------
+// passive & active membrane 
+// --------------------------------------------------------------
+
+ra        = 200 // ohm cm
+global_ra = ra 
+rm        = 40000 // ohm cm2
+c_m       = 0.75 // uF/cm2
+v_init    = -70 // mV
+celsius = 23
+
+// channel parameters
+Ek = -90 // mV
+Ena = 60
+
+gna_dend = 30 // S/cm2
+gna_soma = 30 
+gna_dend9_81 = 30 
+gna_node = 30000
+navshift = 0
+
+gk = 100
+//frac_gk_apical = 0
+//gk_node = 0
+
+proc install_channels() {
+  
+  // passive
+  forall {
+    insert pas
+    Ra = ra
+    cm = c_m 
+    g_pas = 1/rm
+    e_pas = v_init
+  }
+  // exceptions along the axon
+  forsec "myelin" cm = 0.04 // very low capacitance (see e.g. Hille 1992)
+  forsec "node" g_pas = 0.02 // very leaky = helps spike repolarisation in the absence of K channels
+
+  // surface correction for spines
+  add_spines(apical,sd_apical)
+  add_spines(oblique,sd_oblique)
+  add_spines(distal,sd_distal)
+  add_spines(basal,sd_basal)
+
+  // Na+ channels everywhere
+  forall insert na3
+  forsec dend gbar_na3 = gna_dend 
+  forsec dend vshift_na3 = navshift
+  dend9[78].gbar_na3 = gna_dend9_81 // potential hotspot
+  dend9[79].gbar_na3 = gna_dend9_81 // potential hotspot
+  dend9[80].gbar_na3 = gna_dend9_81 // potential hotspot
+  dend9[81].gbar_na3 = gna_dend9_81 // potential hotspot
+  forsec "myelin" gbar_na3 = gna_dend
+  soma.gbar_na3 = gna_soma
+  hill.gbar_na3 = gna_node
+  iseg.gbar_na3 = gna_node
+  forsec "node" gbar_na3 = gna_node
+  forall if (ismembrane("na3")) ena = Ena     
+
+  // K+ channels in soma and basal dendrites only
+  forsec basal {
+    insert kd3
+    gbar_kd3 = gk
+  }
+  soma insert kd3
+  soma.gbar_kd3 = gk
+  forall if (ismembrane("kd3")) ek = Ek  
+
+}
+
+proc update_values() {
+  
+  // passive
+  forall {
+    Ra = ra
+    cm = c_m 
+    g_pas = 1/rm
+    e_pas = v_init
+  }
+  // exceptions along the axon
+  forsec "myelin" cm = 0.04 // very low capacitance (see e.g. Hille 1992)
+  forsec "node" g_pas = 0.02 // very leaky = helps spike repolarisation in the absence of K channels
+
+  // surface correction for spines
+  add_spines(apical,sd_apical)
+  add_spines(oblique,sd_oblique)
+  add_spines(distal,sd_distal)
+  add_spines(basal,sd_basal)
+
+  // Na+ channels everywhere
+  forsec dend gbar_na3 = gna_dend 
+  forsec dend vshift_na3 = navshift
+  dend9[78].gbar_na3 = gna_dend9_81 // potential hotspot
+  dend9[79].gbar_na3 = gna_dend9_81 // potential hotspot
+  dend9[80].gbar_na3 = gna_dend9_81 // potential hotspot
+  dend9[81].gbar_na3 = gna_dend9_81 // potential hotspot
+  forsec "myelin" gbar_na3 = gna_dend
+  soma.gbar_na3 = gna_soma
+  hill.gbar_na3 = gna_node
+  iseg.gbar_na3 = gna_node
+  forsec "node" gbar_na3 = gna_node
+  forall if (ismembrane("na3")) ena = Ena     
+
+  // K+ channels in soma and basal dendrites only
+  forsec basal {
+    gbar_kd3 = gk
+  }
+  soma.gbar_kd3 = gk
+  forall if (ismembrane("kd3")) ek = Ek  
+
+}
+
+install_channels()
+
+
+// --------------------------------------------------------------
+// create graphs & panels
+// --------------------------------------------------------------
+
+xopen("tutorial2b.ses")
+
+//nrnmainmenu()
+//nrncontrolmenu()
+
+//newPlotV()
+//graphItem.addvar("iseg.v(.5)",7,1)
+
+//xpanel("Cell Parameters")
+//xvalue("Cm (uF/cm2)","c_m", 1,"update_values()", 0, 0)
+//xvalue("Rm (ohm cm2)","rm", 1,"update_values()", 0, 0)
+//xvalue("Ra (ohm cm)","ra", 1,"update_values()", 0, 0)
+//xlabel("Channel Conductances")
+//xvalue("gna dend (pS/um2)","gna_dend", 1,"update_values()", 0, 0)
+//xvalue("gna dend9[78-81] (pS/um2)","gna_dend9_81", 1,"update_values()", 0, 0)
+//xvalue("gna soma (pS/um2)","gna_soma", 1,"update_values()", 0, 0)
+//xvalue("gna axon (pS/um2)","gna_node", 1,"update_values()", 0, 0)
+//xvalue("gk (pS/um2)","gk", 1,"update_values()", 0, 0)
+//xpanel()
+
+
+
