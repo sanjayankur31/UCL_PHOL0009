@@ -4,14 +4,7 @@
     xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2.3.xsd"
     id = "NeuroML2_file_exported_from_NEURON">
 
-  <notes> NeuroML 2 file generated from ModelView by: NEURON -- VERSION 8.2.4+ HEAD (1d87d5d39+) 2024-02-09
-          Authors: Michael Hines, Sushil Kambampati and Padraig Gleeson,
-          Yale University and UCL
-  </notes>
-
-  <cell id="Cell0">
-    <notes>Cell: Cell0 exported from NEURON ModelView</notes>
-    <morphology id="morphology">
+    <morphology id="dks577_morphology">
 <!-- Section: soma (segmentGroup: soma) which has 17 3D points, so 16 segment(s)-->
       <segment id="0" name = "Seg0_soma">
         <proximal x="-161.5" y="-17" z="-8" diameter="0.01"/>
@@ -33899,5 +33892,4 @@
       </segmentGroup>
 
     </morphology>
-  </cell>
 </neuroml>
