@@ -1,0 +1,62 @@
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2.3.1.xsd" id="kd3">
+    <ionChannelHH id="kd3" species="K" conductance="10 pS">
+        <annotation>
+            
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:foaf="http://xmlns.com/foaf/0.1/">
+              <rdf:Description rdf:about="kd3">
+                <dc:title>Potassium channel</dc:title>
+                <dc:description>Potassium channel with Hodgkin-Huxley style kinetics</dc:description>
+                <dc:source>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="https://modeldb.science/8210"/>
+                  </rdf:Bag>
+                </dc:source>
+                <dc:creator>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="#Zack_Mainen"/>
+                  </rdf:Bag>
+                </dc:creator>
+                <dc:contributor>
+                  <rdf:Bag>
+                    <rdf:li rdf:resource="#Volker_Steuber"/>
+                    <rdf:li rdf:resource="#Padraig_Gleeson"/>
+                    <rdf:li rdf:resource="#Ankur_Sinha"/>
+                  </rdf:Bag>
+                </dc:contributor>
+              </rdf:Description>
+              <rdf:Description rdf:about="#Zack_Mainen">
+                <foaf:name>Zack Mainen</foaf:name>
+              </rdf:Description>
+              <rdf:Description rdf:about="#Padraig_Gleeson">
+                <foaf:name>Padraig Gleeson</foaf:name>
+              </rdf:Description>
+              <rdf:Description rdf:about="#Ankur_Sinha">
+                <foaf:name>Ankur Sinha</foaf:name>
+              </rdf:Description>
+              <rdf:Description rdf:about="#Volker_Steuber">
+                <foaf:name>Volker Steuber</foaf:name>
+              </rdf:Description>
+            </rdf:RDF>
+
+        </annotation>
+        <gate id="n" instances="1" type="gateHHrates">
+            <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="16 degC"/>
+            <forwardRate type="HHNearlyExpLinearRate" rate="0.02 per_ms" midpoint="20 mV" scale="9 mV"/>
+            <reverseRate type="HHNearlyExpLinearRate" rate="-0.002 per_ms" midpoint="20 mV" scale="-9 mV"/>
+        </gate>
+    </ionChannelHH>
+    <ComponentType name="HHNearlyExpLinearRate" extends="baseHHRate" description="A HHExpLinearRate, but not quite">
+        <Parameter name="scale" dimension="voltage"/>
+        <Parameter name="midpoint" dimension="voltage"/>
+        <Parameter name="rate" dimension="per_time"/>
+        <Constant name="VOLT_SCALE" dimension="voltage" value="1 mV"/>
+        <Dynamics>
+            <DerivedVariable name="x" dimension="voltage" value="(v - midpoint)"/>
+            <DerivedVariable name="xnodim" dimension="none" value="x / VOLT_SCALE"/>
+            <ConditionalDerivedVariable name="r" dimension="per_time" exposure="r">
+                <Case condition="xnodim .neq. 0" value="rate * xnodim/(1 - exp(0 - x/scale))"/>
+                <Case value="rate"/>
+            </ConditionalDerivedVariable>
+        </Dynamics>
+    </ComponentType>
+</neuroml>
