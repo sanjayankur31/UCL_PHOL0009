@@ -126,6 +126,17 @@ class Tutorial2A(object):
             ion="non_specific",
         )
 
+        # initially 0, then students are asked to increase this value
+        self.cell.add_channel_density(self.celldoc, cd_id="na3",
+                                      ion_channel="na3", cond_density="0 S_per_cm2",
+                                      erev="60 mV", group_id="all", ion="na",
+                                      ion_chan_def_file="channels/Na3.channel.nml")
+
+        self.cell.add_channel_density(self.celldoc, cd_id="kd3",
+                                      ion_channel="kd3", cond_density="0 S_per_cm2",
+                                      erev="-90 mV", group_id="all", ion="k",
+                                      ion_chan_def_file="channels/Kd3.channel.nml")
+
         self.cell.validate(recursive=True)
 
         # TODO: create default segment groups in morphology
@@ -196,4 +207,4 @@ class Tutorial2A(object):
 
 if __name__ == "__main__":
     tut = Tutorial2A()
-    # tut.postprocess()
+    tut.postprocess()
